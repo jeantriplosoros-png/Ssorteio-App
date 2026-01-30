@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteio Premium - Aparelhos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff6b35;
+            --secondary: #004e89;
+            --accent: #f7b801;
+            --dark: #1a1a1a;
+            --light: #f5f5f5;
+            --success: #06a77d;
+            --danger: #d62828;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--secondary) 0%, #003d6b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: var(--light);
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: var(--secondary);
+        }
+
+        .tab-btn.active {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 78, 137, 0.3);
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* SEÇÕES */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* PAINEL ADMIN */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .admin-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-card h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #ff8c5a);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        /* LISTA DE SORTEIOS */
+        .sorteios-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .sorteio-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sorteio-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .sorteio-nome {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .sorteio-valor {
+            font-size: 24px;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .sorteio-info {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .sorteio-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sorteio-actions button {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        /* PÁGINA CLIENTE */
+        .client-header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .client-header h1 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .client-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .sorteios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .sorteio-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .sorteio-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .sorteio-card-image {
+            height: 180px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        .sorteio-card-content {
+            padding: 20px;
+        }
+
+        .sorteio-card-nome {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .sorteio-card-valor {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .sorteio-card-desc {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        /* MODAL SORTEIO */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            color: var(--secondary);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .modal-header .valor {
+            color: var(--primary);
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .numeros-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .numero-btn {
+            padding: 20px;
+            border: 3px solid var(--light);
+            background: white;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--dark);
+        }
+
+        .numero-btn:hover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.05);
+            transform: scale(1.05);
+        }
+
+        .numero-btn.disponivel {
+            color: var(--secondary);
+        }
+
+        .numero-btn.indisponivel {
+            background: var(--light);
+            cursor: not-allowed;
+            color: #999;
+            border-color: #ddd;
+        }
+
+        .numero-btn.indisponivel:hover {
+            transform: none;
+        }
+
+        .numero-btn.selecionado {
+            background: linear-gradient(135deg, var(--primary), #ff8c5a);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .pix-info {
+            background: rgba(6, 168, 125, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--success);
+        }
+
+        .pix-info h4 {
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .pix-chave {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            word-break: break-all;
+            margin-top: 10px;
+            border: 2px solid var(--success);
+            color: var(--dark);
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .copy-btn:hover {
+            opacity: 0.9;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-footer button {
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+
+        .btn-success:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .fechar-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--light);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .fechar-modal:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* ANIMAÇÃO DE SUCESSO */
+        .success-message {
+            background: var(--success);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: slideDown 0.4s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .numeros-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .sorteios-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo">🎁 SORTEIO PREMIUM</div>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('cliente')">Cliente</button>
+                <button class="tab-btn" onclick="mudarTab('admin')">Admin</button>
+            </div>
+        </div>
+
+        <!-- SEÇÃO CLIENTE -->
+        <div id="cliente" class="section active">
+            <div class="client-header">
+                <h1>🎯 Escolha Seu Número da Sorte</h1>
+                <p>Participe dos melhores sorteios e concorra a aparelhos incríveis!</p>
+            </div>
+
+            <div id="sorteioCont" class="sorteios-grid">
+                <!-- Sorteios aparecem aqui -->
+            </div>
+        </div>
+
+        <!-- SEÇÃO ADMIN -->
+        <div id="admin" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);">
+                <div>
+                    <h2 style="color: var(--secondary); margin-bottom: 5px;">🔐 Painel do Administrador</h2>
+                    <p style="color: #666; font-size: 14px;">Você está logado como administrador</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="alterarSenha()" style="width: auto; padding: 10px 20px; font-size: 14px;">🔑 Alterar Senha</button>
+                    <button class="btn btn-danger" onclick="fazerLogout()" style="width: auto; padding: 10px 20px; font-size: 14px;">🚪 Sair</button>
+                </div>
+            </div>
+
+            <div class="admin-grid">
+                <!-- ADICIONAR SORTEIO -->
+                <div class="admin-card">
+                    <h2>➕ Adicionar Novo Sorteio</h2>
+                    <form onsubmit="adicionarSorteio(event)">
+                        <div class="form-group">
+                            <label>Nome do Aparelho</label>
+                            <input type="text" id="nome" placeholder="Ex: Som de Carro Pioneer" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor da Unidade (R$)</label>
+                            <input type="number" id="valor" placeholder="Ex: 50" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Total de Números</label>
+                            <input type="number" id="numeros" placeholder="Ex: 50" min="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Descrição</label>
+                            <input type="text" id="descricao" placeholder="Ex: Som de carro com entrada USB">
+                        </div>
+                        <div class="form-group">
+                            <label>Emoji/Ícone</label>
+                            <input type="text" id="emoji" placeholder="Ex: 🎵" value="🎁" maxlength="2">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Adicionar Sorteio</button>
+                    </form>
+                </div>
+
+                <!-- CONFIGURAÇÃO PIX -->
+                <div class="admin-card">
+                    <h2>🔑 Configurar Chave Pix</h2>
+                    <form onsubmit="salvarPixChave(event)">
+                        <div class="form-group">
+                            <label>Sua Chave Pix</label>
+                            <input type="text" id="pixInput" placeholder="Ex: seu@email.com ou CPF ou telefone ou chave aleatória">
+                        </div>
+                        <div style="background: #f0f0f0; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; color: #666;">
+                            <strong>💡 Dica:</strong> Cole aqui a chave Pix que você quer receber os pagamentos. Pode ser email, CPF, telefone ou chave aleatória.
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar Chave Pix</button>
+                    </form>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+                        <div style="font-size: 12px; color: #999; margin-bottom: 5px;">Chave Pix Atual:</div>
+                        <div style="background: white; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 14px; color: var(--secondary); font-weight: bold; word-break: break-all; border: 2px solid var(--primary);" id="pixAtual">12345678901234567890</div>
+                    </div>
+                </div>
+
+            <!-- SORTEIOS ATIVOS -->
+            <div class="admin-card" style="margin-bottom: 30px;">
+                <h2>📋 Sorteios Ativos</h2>
+                <div id="sorteiosAdmin">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>Nenhum sorteio ainda</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESTATÍSTICAS -->
+            <div class="admin-card">
+                <h2>📊 Estatísticas</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="background: linear-gradient(135deg, var(--primary), #ff8c5a); color: white; padding: 20px; border-radius: 12px;">
+                        <div style="font-size: 14px; opacity: 0.9;">Total de Sorteios</div>
+                        <div style="font-size: 32px; font-weight: bold;" id="totalSorteios">0</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, var(--secondary), #003d6b); color: white; padding: 20px; border-radius: 12px;">
+                        <div style="font-size: 14px; opacity: 0.9;">Números Vendidos</div>
+                        <div style="font-size: 32px; font-weight: bold;" id="totalVendidos">0</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, var(--accent), #f7c801); color: #000; padding: 20px; border-radius: 12px;">
+                        <div style="font-size: 14px;">Faturamento</div>
+                        <div style="font-size: 32px; font-weight: bold;" id="totalFaturamento">R$ 0,00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTICIPAÇÕES RECEBIDAS -->
+            <div class="admin-card" style="margin-bottom: 30px;">
+                <h2>👥 Participações Recebidas</h2>
+                <div id="participacoesContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>Nenhuma participação ainda</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAZER SORTEIO -->
+            <div class="admin-card" style="margin-bottom: 30px;">
+                <h2>🎲 Realizar Sorteio</h2>
+                <div id="sorteioRealizar">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <p>Selecione um sorteio acima para realizar o sorteio</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTADO DO SORTEIO -->
+            <div id="resultadoSorteio" class="admin-card" style="margin-bottom: 30px; display: none;">
+                <h2>🏆 Resultado do Sorteio</h2>
+                <div style="background: linear-gradient(135deg, var(--primary), #ff8c5a); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 14px; margin-bottom: 10px;">NÚMERO SORTEADO</div>
+                    <div id="numeroSorteado" style="font-size: 72px; font-weight: bold; margin-bottom: 15px;">000</div>
+                    <div style="font-size: 16px; font-weight: bold;" id="nomeGanhador">Aguardando sorteio...</div>
+                </div>
+
+                <div id="dadosGanhador" style="background: #f5f5f5; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <div style="font-size: 12px; color: #999; font-weight: 600;">👤 Nome</div>
+                            <div id="ganhadorNome" style="color: var(--secondary); font-weight: bold;">-</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #999; font-weight: 600;">📧 Email</div>
+                            <div id="ganhadorEmail" style="color: var(--secondary); font-weight: bold;">-</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #999; font-weight: 600;">📱 Telefone</div>
+                            <div id="ganhadorTelefone" style="color: var(--secondary); font-weight: bold;">-</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #999; font-weight: 600;">🏙️ Cidade</div>
+                            <div id="ganhadorCidade" style="color: var(--secondary); font-weight: bold;">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="novoSorteio()" style="width: 100%; margin-bottom: 10px;">🔄 Novo Sorteio</button>
+                <button class="btn btn-secondary" onclick="fecharResultadoSorteio()" style="width: 100%;">Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE LOGIN -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>🔐 Login Admin</h2>
+                <p style="color: #666; margin-top: 10px;">Digite sua senha para acessar o painel</p>
+            </div>
+
+            <form onsubmit="fazerLogin(event)" style="margin-bottom: 20px;">
+                <div class="form-group">
+                    <label>Senha de Administrador</label>
+                    <input type="password" id="senhaInput" placeholder="Digite a senha" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+
+            <div style="text-align: center;">
+                <button type="button" class="btn btn-secondary" onclick="fecharLoginModal()" style="width: 100%;">Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE SORTEIO -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button class="fechar-modal" onclick="fecharModal()">✕</button>
+            <div class="modal-header">
+                <h2 id="modalNome">Som de Carro</h2>
+                <div id="modalValor" class="valor">R$ 50,00</div>
+                <p id="modalDesc" style="color: #666; margin-top: 10px;"></p>
+            </div>
+
+            <!-- ABA 1: ESCOLHER NÚMEROS -->
+            <div id="abaNumeros">
+                <p style="color: var(--secondary); font-weight: 600; margin-bottom: 15px;">Escolha os números que deseja comprar (de 1 a <span id="maxNumero">50</span>):</p>
+                <div class="numeros-grid" id="numerosGrid">
+                    <!-- Números aparecem aqui -->
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+                    <p style="color: #666; font-size: 14px; margin-bottom: 10px;"><strong>Números selecionados:</strong> <span id="numerosSelecionadosList" style="color: var(--primary); font-weight: bold;">Nenhum</span></p>
+                    <p style="color: #666; font-size: 14px;"><strong>Valor Total:</strong> <span style="color: var(--success); font-weight: bold; font-size: 16px;">R$ <span id="valorTotal">0,00</span></span></p>
+                </div>
+
+                <div class="modal-footer" style="margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                    <button id="btnProximo" class="btn btn-primary" onclick="irParaDados()" style="display: none;">Próximo →</button>
+                </div>
+            </div>
+
+            <!-- ABA 2: DADOS DO CLIENTE -->
+            <div id="abaDados" style="display: none;">
+                <p style="color: var(--secondary); font-weight: 600; margin-bottom: 20px;">Preencha seus dados:</p>
+
+                <form onsubmit="irParaComprovante(event)">
+                    <div class="form-group">
+                        <label>Nome Completo *</label>
+                        <input type="text" id="nomeCliente" placeholder="Seu nome completo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="emailCliente" placeholder="seu@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Telefone/WhatsApp *</label>
+                        <input type="tel" id="telefoneCliente" placeholder="(11) 99999-9999" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CPF (opcional)</label>
+                        <input type="text" id="cpfCliente" placeholder="000.000.000-00">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cidade *</label>
+                        <input type="text" id="cidadeCliente" placeholder="Sua cidade" required>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="voltarParaNumeros()">← Voltar</button>
+                        <button type="submit" class="btn btn-primary">Próximo →</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ABA 3: COMPROVANTE E CONFIRMAÇÃO -->
+            <div id="abaComprovante" style="display: none;">
+                <div class="pix-info" style="background: rgba(6, 168, 125, 0.1); border-left: 4px solid var(--success);">
+                    <h4 style="color: var(--success); margin-bottom: 10px;">✅ Números Selecionados</h4>
+                    <p style="margin-bottom: 10px; color: #666;"><strong>Números:</strong> <span id="resumoNumeros" style="color: var(--primary); font-weight: bold;"></span></p>
+                    <p style="margin-bottom: 10px; color: #666;"><strong>Quantidade:</strong> <span id="resumoQuantidade" style="color: var(--primary); font-weight: bold;"></span></p>
+                    <p style="color: #666;"><strong>Valor Total:</strong> <span id="resumoValor" style="color: var(--primary); font-weight: bold; font-size: 18px;"></span></p>
+                </div>
+
+                <div class="pix-info" style="background: rgba(255, 107, 53, 0.1); border-left: 4px solid var(--primary); margin-top: 20px;">
+                    <h4 style="color: var(--primary); margin-bottom: 10px;">💳 Dados para Pagamento</h4>
+                    <p style="margin-bottom: 10px;">Chave Pix para pagamento:</p>
+                    <div class="pix-chave" id="pixChaveComprovante">12345678901234567890</div>
+                    <button type="button" class="copy-btn" onclick="copiarPixComprovante()">📋 Copiar Chave Pix</button>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ff6b35; border-radius: 8px;">
+                    <p style="color: #856404; font-size: 14px;"><strong>⚠️ Importante:</strong> Faça o pagamento via Pix e depois anexe o comprovante abaixo.</p>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600; color: var(--secondary);">📸 Enviar Comprovante de Pagamento *</label>
+                    <input type="file" id="comprovanteFile" accept="image/*" required style="padding: 12px; border: 2px solid var(--light); border-radius: 8px; width: 100%; cursor: pointer;">
+                    <p style="font-size: 12px; color: #999; margin-top: 5px;">Formatos aceitos: JPG, PNG (máximo 5MB)</p>
+                </div>
+
+                <div class="modal-footer" style="margin-top: 30px;">
+                    <button type="button" class="btn btn-secondary" onclick="voltarParaDados()">← Voltar</button>
+                    <button id="btnConfirmarFinal" class="btn btn-success" onclick="confirmarParticipacao()">✅ Confirmar Participação</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sorteios = JSON.parse(localStorage.getItem('sorteios')) || [];
+        let participacoes = JSON.parse(localStorage.getItem('participacoes')) || [];
+        let pixChaveGlobal = localStorage.getItem('pixChave') || '12345678901234567890';
+        let senhaAdmin = localStorage.getItem('senhaAdmin') || 'admin123';
+        let usuarioLogado = localStorage.getItem('usuarioLogado') === 'true';
+        let numeroSelecionado = null;
+        let sorteioAtual = null;
+
+        // FUNÇÕES DE TAB
+        function mudarTab(tab) {
+            if (tab === 'admin' && !usuarioLogado) {
+                abrirLoginModal();
+                return;
+            }
+
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (tab === 'admin') {
+                atualizarAdmin();
+            } else {
+                atualizarCliente();
+            }
+        }
+
+        // LOGIN - ABRIR MODAL
+        function abrirLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        // LOGIN - FECHAR MODAL
+        function fecharLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        // LOGIN - FAZER LOGIN
+        function fazerLogin(e) {
+            e.preventDefault();
+            const senha = document.getElementById('senhaInput').value;
+
+            if (senha === senhaAdmin) {
+                usuarioLogado = true;
+                localStorage.setItem('usuarioLogado', 'true');
+                fecharLoginModal();
+                document.getElementById('senhaInput').value = '';
+                
+                // Muda para a aba admin
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById('admin').classList.add('active');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                
+                atualizarAdmin();
+                alert('✅ Login realizado com sucesso!');
+            } else {
+                alert('❌ Senha incorreta!');
+            }
+        }
+
+        // LOGIN - LOGOUT
+        function fazerLogout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                usuarioLogado = false;
+                localStorage.setItem('usuarioLogado', 'false');
+                
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById('cliente').classList.add('active');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                
+                atualizarCliente();
+                alert('✅ Desconectado com sucesso!');
+            }
+        }
+
+        // ADMIN - ALTERAR SENHA
+        function alterarSenha() {
+            const senhaAtual = prompt('Digite a senha atual:');
+            if (senhaAtual === null) return;
+
+            if (senhaAtual !== senhaAdmin) {
+                alert('❌ Senha atual incorreta!');
+                return;
+            }
+
+            const novaSenha = prompt('Digite a nova senha:');
+            if (novaSenha === null || novaSenha.trim() === '') return;
+
+            if (novaSenha.length < 4) {
+                alert('⚠️ A senha deve ter pelo menos 4 caracteres');
+                return;
+            }
+
+            senhaAdmin = novaSenha;
+            localStorage.setItem('senhaAdmin', novaSenha);
+            alert('✅ Senha alterada com sucesso!');
+        }
+
+        // CLIENTE - RENDERIZAR SORTEIOS
+        function atualizarCliente() {
+            const cont = document.getElementById('sorteioCont');
+            
+            if (sorteios.length === 0) {
+                cont.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><div class="empty-state-icon">🎁</div><p>Nenhum sorteio disponível no momento</p></div>';
+                return;
+            }
+
+            cont.innerHTML = sorteios.map((s, idx) => {
+                const vendidos = participacoes.filter(p => p.sorteioId === idx).length;
+                const disponivel = s.numeros - vendidos;
+
+                return `
+                    <div class="sorteio-card" onclick="abrirModal(${idx})">
+                        <div class="sorteio-card-image">${s.emoji}</div>
+                        <div class="sorteio-card-content">
+                            <div class="sorteio-card-nome">${s.nome}</div>
+                            <div class="sorteio-card-valor">R$ ${s.valor.toFixed(2)}</div>
+                            <div class="sorteio-card-desc">${s.descricao}</div>
+                            <div style="color: #999; font-size: 13px;">
+                                <strong style="color: var(--success);">${disponivel}</strong> números disponíveis de ${s.numeros}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // VARIÁVEIS DO MODAL
+        let numerosEscolhidos = [];
+        let quantidadeEscolhida = 1;
+        let precoUnitario = 0;
+
+        // MODAL - ABRIR
+        function abrirModal(idx) {
+            sorteioAtual = idx;
+            numerosEscolhidos = [];
+            quantidadeEscolhida = 1;
+            const s = sorteios[idx];
+            precoUnitario = s.valor;
+
+            document.getElementById('modalNome').textContent = s.nome;
+            document.getElementById('modalValor').textContent = `R$ ${s.valor.toFixed(2)}`;
+            document.getElementById('modalDesc').textContent = s.descricao;
+            document.getElementById('maxNumero').textContent = s.numeros;
+            document.getElementById('valorTotal').textContent = '0,00';
+
+            const vendidos = participacoes.filter(p => p.sorteioId === idx);
+            const numerosVendidos = vendidos.map(v => {
+                // Se for array de números (novo formato)
+                if (Array.isArray(v.numeros)) return v.numeros;
+                // Se for número único (formato antigo)
+                return [v.numero];
+            }).flat();
+
+            const grid = document.getElementById('numerosGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= s.numeros; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = i;
+                btn.className = 'numero-btn';
+
+                if (numerosVendidos.includes(i)) {
+                    btn.classList.add('indisponivel');
+                    btn.disabled = true;
+                } else {
+                    btn.classList.add('disponivel');
+                    btn.onclick = (e) => {
+                        e.preventDefault();
+                        selecionarNumero(i, btn);
+                    };
+                }
+
+                grid.appendChild(btn);
+            }
+
+            // Mostrar aba de números
+            document.getElementById('abaNumeros').style.display = 'block';
+            document.getElementById('abaDados').style.display = 'none';
+            document.getElementById('abaComprovante').style.display = 'none';
+            document.getElementById('numerosSelecionadosList').textContent = 'Nenhum';
+
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // MODAL - SELECIONAR NÚMERO
+        function selecionarNumero(num, btn) {
+            if (numerosEscolhidos.includes(num)) {
+                numerosEscolhidos = numerosEscolhidos.filter(n => n !== num);
+                btn.classList.remove('selecionado');
+            } else {
+                numerosEscolhidos.push(num);
+                btn.classList.add('selecionado');
+            }
+
+            numerosEscolhidos.sort((a, b) => a - b);
+            atualizarListaNumeros();
+            atualizarValorTotal();
+            atualizarBotaoProximo();
+        }
+
+        // MODAL - ATUALIZAR VALOR TOTAL
+        function atualizarValorTotal() {
+            const valorTotal = precoUnitario * numerosEscolhidos.length;
+            document.getElementById('valorTotal').textContent = valorTotal.toFixed(2);
+        }
+
+        // MODAL - ATUALIZAR LISTA DE NÚMEROS
+        function atualizarListaNumeros() {
+            if (numerosEscolhidos.length === 0) {
+                document.getElementById('numerosSelecionadosList').textContent = 'Nenhum';
+            } else {
+                document.getElementById('numerosSelecionadosList').textContent = numerosEscolhidos.join(', ');
+            }
+        }
+
+        // MODAL - ATUALIZAR BOTÃO PRÓXIMO
+        function atualizarBotaoProximo() {
+            if (numerosEscolhidos.length > 0) {
+                document.getElementById('btnProximo').style.display = 'inline-block';
+            } else {
+                document.getElementById('btnProximo').style.display = 'none';
+            }
+        }
+
+        // MODAL - ATUALIZAR VALOR TOTAL
+        function atualizarValorTotal() {
+            const valorTotal = precoUnitario * numerosEscolhidos.length;
+            document.getElementById('valorTotal').textContent = valorTotal.toFixed(2);
+        }
+
+        // MODAL - IR PARA DADOS
+        function irParaDados() {
+            document.getElementById('abaNumeros').style.display = 'none';
+            document.getElementById('abaDados').style.display = 'block';
+            document.getElementById('abaComprovante').style.display = 'none';
+        }
+
+        // MODAL - VOLTAR PARA NÚMEROS
+        function voltarParaNumeros() {
+            document.getElementById('abaNumeros').style.display = 'block';
+            document.getElementById('abaDados').style.display = 'none';
+            document.getElementById('abaComprovante').style.display = 'none';
+        }
+
+        // MODAL - IR PARA COMPROVANTE
+        function irParaComprovante(e) {
+            e.preventDefault();
+
+            const nomeCliente = document.getElementById('nomeCliente').value;
+            const emailCliente = document.getElementById('emailCliente').value;
+            const telefoneCliente = document.getElementById('telefoneCliente').value;
+
+            if (!nomeCliente || !emailCliente || !telefoneCliente) {
+                alert('⚠️ Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+
+            document.getElementById('abaNumeros').style.display = 'none';
+            document.getElementById('abaDados').style.display = 'none';
+            document.getElementById('abaComprovante').style.display = 'block';
+
+            // Atualizar resumo
+            document.getElementById('resumoNumeros').textContent = numerosEscolhidos.join(', ');
+            document.getElementById('resumoQuantidade').textContent = numerosEscolhidos.length;
+            const valorTotal = precoUnitario * numerosEscolhidos.length;
+            document.getElementById('resumoValor').textContent = `R$ ${valorTotal.toFixed(2)}`;
+            document.getElementById('pixChaveComprovante').textContent = pixChaveGlobal;
+        }
+
+        // MODAL - VOLTAR PARA DADOS
+        function voltarParaDados() {
+            document.getElementById('abaNumeros').style.display = 'none';
+            document.getElementById('abaDados').style.display = 'block';
+            document.getElementById('abaComprovante').style.display = 'none';
+        }
+
+        // MODAL - COPIAR PIX
+        function copiarPixComprovante() {
+            const pix = document.getElementById('pixChaveComprovante').textContent;
+            navigator.clipboard.writeText(pix).then(() => {
+                alert('✅ Chave Pix copiada!');
+            });
+        }
+
+        // MODAL - CONFIRMAR PARTICIPAÇÃO
+        function confirmarParticipacao() {
+            const comprovanteFile = document.getElementById('comprovanteFile').files[0];
+
+            if (!comprovanteFile) {
+                alert('⚠️ Por favor, selecione um comprovante!');
+                return;
+            }
+
+            if (comprovanteFile.size > 5 * 1024 * 1024) {
+                alert('⚠️ O arquivo é muito grande (máximo 5MB)');
+                return;
+            }
+
+            // Converter arquivo para base64
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const nomeCliente = document.getElementById('nomeCliente').value;
+                const emailCliente = document.getElementById('emailCliente').value;
+                const telefoneCliente = document.getElementById('telefoneCliente').value;
+                const cpfCliente = document.getElementById('cpfCliente').value;
+                const cidadeCliente = document.getElementById('cidadeCliente').value;
+                const valorTotal = precoUnitario * numerosEscolhidos.length;
+
+                const participacao = {
+                    sorteioId: sorteioAtual,
+                    numeros: numerosEscolhidos,
+                    nomeCliente: nomeCliente,
+                    emailCliente: emailCliente,
+                    telefoneCliente: telefoneCliente,
+                    cpfCliente: cpfCliente,
+                    cidadeCliente: cidadeCliente,
+                    valorTotal: valorTotal,
+                    comprovante: e.target.result,
+                    nomeComprovante: comprovanteFile.name,
+                    data: new Date().toLocaleString()
+                };
+
+                participacoes.push(participacao);
+                localStorage.setItem('participacoes', JSON.stringify(participacoes));
+
+                alert(`✅ Participação registrada com sucesso!\n\nNúmeros: ${numerosEscolhidos.join(', ')}\nValor: R$ ${valorTotal.toFixed(2)}\n\nEntramos em contato em breve!`);
+                fecharModal();
+                atualizarCliente();
+            };
+            reader.readAsDataURL(comprovanteFile);
+        }
+
+        // MODAL - FECHAR
+        function fecharModal() {
+            document.getElementById('modal').classList.remove('active');
+            numerosEscolhidos = [];
+            quantidadeEscolhida = 1;
+            document.getElementById('nomeCliente').value = '';
+            document.getElementById('emailCliente').value = '';
+            document.getElementById('telefoneCliente').value = '';
+            document.getElementById('cpfCliente').value = '';
+            document.getElementById('cidadeCliente').value = '';
+            document.getElementById('comprovanteFile').value = '';
+        }
+
+        // ADMIN - SALVAR CHAVE PIX
+        function salvarPixChave(e) {
+            e.preventDefault();
+            const chave = document.getElementById('pixInput').value.trim();
+            
+            if (!chave) {
+                alert('⚠️ Por favor, insira uma chave Pix válida');
+                return;
+            }
+
+            pixChaveGlobal = chave;
+            localStorage.setItem('pixChave', chave);
+            alert('✅ Chave Pix salva com sucesso!');
+            document.getElementById('pixInput').value = '';
+            atualizarAdmin();
+        }
+
+        // MODAL - FECHAR
+        function fecharModal() {
+            document.getElementById('modal').classList.remove('active');
+            numeroSelecionado = null;
+        }
+
+        // ADMIN - ADICIONAR SORTEIO
+        function adicionarSorteio(e) {
+            e.preventDefault();
+
+            const novo = {
+                nome: document.getElementById('nome').value,
+                valor: parseFloat(document.getElementById('valor').value),
+                numeros: parseInt(document.getElementById('numeros').value),
+                descricao: document.getElementById('descricao').value,
+                emoji: document.getElementById('emoji').value || '🎁'
+            };
+
+            sorteios.push(novo);
+            localStorage.setItem('sorteios', JSON.stringify(sorteios));
+
+            e.target.reset();
+            alert('✅ Sorteio adicionado com sucesso!');
+            atualizarAdmin();
+        }
+
+        // ADMIN - ATUALIZAR
+        function atualizarAdmin() {
+            const cont = document.getElementById('sorteiosAdmin');
+            document.getElementById('pixAtual').textContent = pixChaveGlobal;
+
+            if (sorteios.length === 0) {
+                cont.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>Nenhum sorteio ainda</p></div>';
+                document.getElementById('totalSorteios').textContent = '0';
+                document.getElementById('totalVendidos').textContent = '0';
+                document.getElementById('totalFaturamento').textContent = 'R$ 0,00';
+                return;
+            }
+
+            cont.innerHTML = sorteios.map((s, idx) => {
+                const vendidos = participacoes.filter(p => p.sorteioId === idx);
+                
+                // Calcular faturamento baseado no valor total de cada participação
+                const faturamento = vendidos.reduce((total, v) => total + (v.valorTotal || 0), 0);
+                
+                // Contar números únicos vendidos
+                const numerosVendidosSet = new Set();
+                vendidos.forEach(v => {
+                    if (Array.isArray(v.numeros)) {
+                        v.numeros.forEach(n => numerosVendidosSet.add(n));
+                    } else if (v.numero) {
+                        numerosVendidosSet.add(v.numero);
+                    }
+                });
+                const numerosVendidosList = Array.from(numerosVendidosSet).sort((a, b) => a - b);
+
+                return `
+                    <div class="sorteio-item">
+                        <div class="sorteio-nome">${s.emoji} ${s.nome}</div>
+                        <div class="sorteio-valor">R$ ${s.valor.toFixed(2)}</div>
+                        <div class="sorteio-info">
+                            <strong>${s.numeros}</strong> números | 
+                            <strong style="color: var(--success);">${numerosVendidosList.length}</strong> vendidos | 
+                            <strong style="color: var(--primary);">R$ ${faturamento.toFixed(2)}</strong>
+                        </div>
+                        <div class="sorteio-info">
+                            Descrição: ${s.descricao}
+                        </div>
+                        <div style="margin-top: 10px; max-height: 150px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 8px; font-size: 12px;">
+                            <strong>Números vendidos (${numerosVendidosList.length}):</strong>
+                            ${numerosVendidosList.length === 0 ? 'Nenhum' : numerosVendidosList.join(', ')}
+                        </div>
+                        <div class="sorteio-info" style="margin-top: 10px; font-size: 12px; color: #666;">
+                            <strong>Participantes:</strong> ${vendidos.length} ${vendidos.length === 1 ? 'pessoa' : 'pessoas'}
+                        </div>
+                        <div class="sorteio-actions" style="margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="editarSorteio(${idx})">✏️ Editar</button>
+                            <button class="btn btn-danger" onclick="deletarSorteio(${idx})">🗑️ Deletar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // ESTATÍSTICAS
+            const totalVendidos = participacoes.reduce((total, p) => {
+                if (Array.isArray(p.numeros)) {
+                    return total + p.numeros.length;
+                }
+                return total + 1;
+            }, 0);
+            
+            const totalFaturamento = participacoes.reduce((total, p) => {
+                return total + (p.valorTotal || 0);
+            }, 0);
+
+            document.getElementById('totalSorteios').textContent = sorteios.length;
+            document.getElementById('totalVendidos').textContent = totalVendidos;
+            document.getElementById('totalFaturamento').textContent = `R$ ${totalFaturamento.toFixed(2)}`;
+
+            atualizarParticipacoes();
+        }
+
+        // ADMIN - ATUALIZAR PARTICIPAÇÕES
+        function atualizarParticipacoes() {
+            const container = document.getElementById('participacoesContainer');
+
+            if (participacoes.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>Nenhuma participação ainda</p></div>';
+                document.getElementById('sorteioRealizar').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>Nenhuma participação disponível para sorteio</p></div>';
+                return;
+            }
+
+            container.innerHTML = participacoes.map((p, idx) => {
+                const sorteio = sorteios[p.sorteioId];
+                const numerosTexto = Array.isArray(p.numeros) ? p.numeros.join(', ') : p.numero;
+
+                return `
+                    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--success); box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                            <div>
+                                <div style="font-size: 12px; color: #999; font-weight: 600;">Sorteio</div>
+                                <div style="color: var(--secondary); font-weight: bold; font-size: 14px;">${sorteio ? sorteio.nome : 'Sorteio Deletado'}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #999; font-weight: 600;">Números Comprados</div>
+                                <div style="color: var(--primary); font-weight: bold; font-size: 14px;">#${numerosTexto}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #999; font-weight: 600;">Valor Total</div>
+                                <div style="color: var(--success); font-weight: bold; font-size: 14px;">R$ ${p.valorTotal.toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #999; font-weight: 600;">Data</div>
+                                <div style="color: #666; font-size: 13px;">${p.data}</div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; font-size: 13px;">
+                                <div>
+                                    <strong style="color: var(--secondary);">👤 Nome:</strong> ${p.nomeCliente}
+                                </div>
+                                <div>
+                                    <strong style="color: var(--secondary);">📧 Email:</strong> ${p.emailCliente}
+                                </div>
+                                <div>
+                                    <strong style="color: var(--secondary);">📱 Telefone:</strong> ${p.telefoneCliente}
+                                </div>
+                                <div>
+                                    <strong style="color: var(--secondary);">🏙️ Cidade:</strong> ${p.cidadeCliente || 'Não informado'}
+                                </div>
+                                <div>
+                                    <strong style="color: var(--secondary);">🔢 CPF:</strong> ${p.cpfCliente || 'Não informado'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: var(--secondary); display: block; margin-bottom: 10px;">📎 Comprovante de Pagamento:</strong>
+                            <button class="btn btn-primary" onclick="abrirComprovante(${idx})" style="width: 100%; padding: 12px; font-size: 14px;">🖼️ Visualizar Comprovante</button>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-success" style="flex: 1;" onclick="aprovarParticipacao(${idx})">✅ Aprovar</button>
+                            <button class="btn btn-danger" style="flex: 1;" onclick="rejeitarParticipacao(${idx})">❌ Rejeitar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Atualizar opções de sorteio
+            atualizarSorteiosDisponiveis();
+        }
+
+        // ADMIN - ATUALIZAR SORTEIOS DISPONÍVEIS
+        function atualizarSorteiosDisponiveis() {
+            const container = document.getElementById('sorteioRealizar');
+            
+            // Agrupar participações por sorteio
+            const sorteiosPorId = {};
+            participacoes.forEach((p, idx) => {
+                if (!sorteiosPorId[p.sorteioId]) {
+                    sorteiosPorId[p.sorteioId] = [];
+                }
+                sorteiosPorId[p.sorteioId].push({...p, idx});
+            });
+
+            const sorteiosComParticipacoes = Object.entries(sorteiosPorId).map(([id, parts]) => ({
+                id: parseInt(id),
+                sorteio: sorteios[id],
+                participacoes: parts
+            }));
+
+            if (sorteiosComParticipacoes.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>Nenhuma participação disponível para sorteio</p></div>';
+                return;
+            }
+
+            container.innerHTML = sorteiosComParticipacoes.map(s => {
+                return `
+                    <div style="background: #f5f5f5; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <div style="font-size: 16px; font-weight: bold; color: var(--secondary); margin-bottom: 5px;">${s.sorteio.emoji} ${s.sorteio.nome}</div>
+                                <div style="color: #666; font-size: 13px;">Participações: <strong>${s.participacoes.length}</strong></div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 13px;">
+                            <strong>Números em jogo:</strong>
+                            <div style="margin-top: 8px; word-break: break-all;">
+                                ${s.participacoes.map(p => {
+                                    const nums = Array.isArray(p.numeros) ? p.numeros.join(', ') : p.numero;
+                                    return `<span style="display: inline-block; background: var(--primary); color: white; padding: 4px 8px; border-radius: 4px; margin-right: 5px; margin-bottom: 5px; font-weight: bold;">#${nums}</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="iniciarSorteio(${s.id})" style="width: 100%; padding: 12px; font-weight: bold;">🎲 INICIAR SORTEIO</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // MODAL - ABRIR COMPROVANTE
+        function abrirComprovante(idx) {
+            const p = participacoes[idx];
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px;';
+            
+            const img = document.createElement('img');
+            img.src = p.comprovante;
+            img.style.cssText = 'max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);';
+            
+            const fechar = document.createElement('button');
+            fechar.textContent = '✕';
+            fechar.style.cssText = 'position: absolute; top: 20px; right: 20px; background: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;';
+            fechar.onclick = () => modal.remove();
+            
+            modal.appendChild(img);
+            modal.appendChild(fechar);
+            document.body.appendChild(modal);
+        }
+
+        // ADMIN - APROVAR PARTICIPAÇÃO
+        function aprovarParticipacao(idx) {
+            if (confirm('Confirmar aprovação desta participação?')) {
+                participacoes[idx].aprovada = true;
+                localStorage.setItem('participacoes', JSON.stringify(participacoes));
+                alert('✅ Participação aprovada!');
+                atualizarParticipacoes();
+            }
+        }
+
+        // ADMIN - REJEITAR PARTICIPAÇÃO
+        function rejeitarParticipacao(idx) {
+            if (confirm('Tem certeza que deseja rejeitar esta participação?')) {
+                participacoes.splice(idx, 1);
+                localStorage.setItem('participacoes', JSON.stringify(participacoes));
+                alert('❌ Participação rejeitada!');
+                atualizarAdmin();
+            }
+        }
+
+        // ADMIN - INICIAR SORTEIO
+        function iniciarSorteio(sorteioId) {
+            const participacoesDoSorteio = participacoes.filter(p => p.sorteioId === sorteioId);
+            
+            if (participacoesDoSorteio.length === 0) {
+                alert('❌ Nenhuma participação disponível para este sorteio!');
+                return;
+            }
+
+            // Criar array com todos os números disponíveis
+            const numerosDisponiveis = [];
+            participacoesDoSorteio.forEach(p => {
+                if (Array.isArray(p.numeros)) {
+                    numerosDisponiveis.push(...p.numeros);
+                } else if (p.numero) {
+                    numerosDisponiveis.push(p.numero);
+                }
+            });
+
+            if (numerosDisponiveis.length === 0) {
+                alert('❌ Erro ao processar números do sorteio!');
+                return;
+            }
+
+            // Realizar sorteio com animação
+            realizarSorteioAnimado(sorteioId, numerosDisponiveis);
+        }
+
+        // ADMIN - REALIZAR SORTEIO COM ANIMAÇÃO
+        let sorteandoEmAndamento = false;
+
+        function realizarSorteioAnimado(sorteioId, numerosDisponiveis) {
+            if (sorteandoEmAndamento) return;
+            sorteandoEmAndamento = true;
+
+            const resultadoDiv = document.getElementById('resultadoSorteio');
+            const numeroSorteadoDiv = document.getElementById('numeroSorteado');
+            
+            resultadoDiv.style.display = 'block';
+            
+            // Animação de sorteio
+            let contador = 0;
+            const intervalo = setInterval(() => {
+                const numeroAleatorio = numerosDisponiveis[Math.floor(Math.random() * numerosDisponiveis.length)];
+                numeroSorteadoDiv.textContent = numeroAleatorio.toString().padStart(3, '0');
+                contador++;
+
+                if (contador >= 30) {
+                    clearInterval(intervalo);
+                    
+                    // Número final sorteado
+                    const numeroFinal = numerosDisponiveis[Math.floor(Math.random() * numerosDisponiveis.length)];
+                    numeroSorteadoDiv.textContent = numeroFinal.toString().padStart(3, '0');
+                    numeroSorteadoDiv.style.animation = 'none';
+                    setTimeout(() => {
+                        numeroSorteadoDiv.style.animation = 'pulse 0.5s ease-in-out';
+                    }, 10);
+
+                    // Encontrar o ganhador
+                    const ganhador = participacoes.find(p => {
+                        const numeros = Array.isArray(p.numeros) ? p.numeros : [p.numero];
+                        return numeros.includes(numeroFinal);
+                    });
+
+                    if (ganhador) {
+                        document.getElementById('nomeGanhador').textContent = `🎉 ${ganhador.nomeCliente} é o GANHADOR!`;
+                        document.getElementById('ganhadorNome').textContent = ganhador.nomeCliente;
+                        document.getElementById('ganhadorEmail').textContent = ganhador.emailCliente;
+                        document.getElementById('ganhadorTelefone').textContent = ganhador.telefoneCliente;
+                        document.getElementById('ganhadorCidade').textContent = ganhador.cidadeCliente || 'Não informado';
+
+                        // Salvar resultado do sorteio
+                        const sorteioRealizado = {
+                            sorteioId: sorteioId,
+                            numeroSorteado: numeroFinal,
+                            ganhador: ganhador,
+                            data: new Date().toLocaleString()
+                        };
+                        
+                        let sorteioDados = JSON.parse(localStorage.getItem('sorteiosRealizados')) || [];
+                        sorteioDados.push(sorteioRealizado);
+                        localStorage.setItem('sorteiosRealizados', JSON.stringify(sorteioDados));
+
+                        setTimeout(() => {
+                            sorteandoEmAndamento = false;
+                        }, 2000);
+                    }
+                }
+            }, 50);
+        }
+
+        // ADMIN - NOVO SORTEIO
+        function novoSorteio() {
+            document.getElementById('resultadoSorteio').style.display = 'none';
+            document.getElementById('numeroSorteado').textContent = '000';
+            document.getElementById('nomeGanhador').textContent = 'Aguardando sorteio...';
+            atualizarAdmin();
+        }
+
+        // ADMIN - FECHAR RESULTADO SORTEIO
+        function fecharResultadoSorteio() {
+            document.getElementById('resultadoSorteio').style.display = 'none';
+        }
+
+        // ADMIN - EDITAR
+        function editarSorteio(idx) {
+            const s = sorteios[idx];
+            const novoValor = prompt(`Novo valor para "${s.nome}":\n(Atual: R$ ${s.valor.toFixed(2)})`, s.valor);
+
+            if (novoValor !== null && !isNaN(novoValor)) {
+                sorteios[idx].valor = parseFloat(novoValor);
+                localStorage.setItem('sorteios', JSON.stringify(sorteios));
+                atualizarAdmin();
+                alert('✅ Sorteio atualizado!');
+            }
+        }
+
+        // ADMIN - DELETAR
+        function deletarSorteio(idx) {
+            if (confirm(`Tem certeza que deseja deletar "${sorteios[idx].nome}"?`)) {
+                sorteios.splice(idx, 1);
+                participacoes = participacoes.filter(p => p.sorteioId !== idx);
+                localStorage.setItem('sorteios', JSON.stringify(sorteios));
+                localStorage.setItem('participacoes', JSON.stringify(participacoes));
+                atualizarAdmin();
+                alert('✅ Sorteio deletado!');
+            }
+        }
+
+        // INICIALIZAR
+        atualizarCliente();
+        
+        // Verificar se estava logado antes
+        if (usuarioLogado) {
+            document.getElementById('admin').classList.remove('active');
+            document.getElementById('cliente').classList.remove('active');
+            document.getElementById('cliente').classList.add('active');
+            localStorage.setItem('usuarioLogado', 'false');
+            usuarioLogado = false;
+        }
+    </script>
+</body>
+</html>
